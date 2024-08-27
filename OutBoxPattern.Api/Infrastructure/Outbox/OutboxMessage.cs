@@ -17,12 +17,7 @@ public class OutboxMessage
   public string EventType { get; private set; }
   public string Payload { get; private set; }
   public DateTimeOffset CreatedAt { get; private set; }
-  public DateTimeOffset? ProcessedAt { get; private set; }
+  public DateTimeOffset? ProcessedAt { get; }
 
   public string? Error { get; }
-
-  public void MarkAsProcessed()
-  {
-    ProcessedAt = TimeProvider.System.GetLocalNow();
-  }
 }

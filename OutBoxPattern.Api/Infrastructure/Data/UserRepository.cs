@@ -1,5 +1,4 @@
-﻿using System.Text.Json;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using OutBoxPattern.Api.Domain;
 using OutBoxPattern.Api.Infrastructure.Outbox;
 
@@ -19,12 +18,12 @@ public class UserRepository
     var user = User.Create(firstname, lastname, email);
     _context.Users.Add(user);
 
-    var outboxMessage = new OutboxMessage(
-      Guid.NewGuid(),
-      "UserCreated",
-      JsonSerializer.Serialize(user)
-    );
-    _context.OutboxMessages.Add(outboxMessage);
+    // var outboxMessage = new OutboxMessage(
+    //   Guid.NewGuid(),
+    //   "UserCreated",
+    //   JsonSerializer.Serialize(user)
+    // );
+    // _context.OutboxMessages.Add(outboxMessage);
 
     await _context.SaveChangesAsync();
     return user;
