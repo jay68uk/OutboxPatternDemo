@@ -4,3 +4,15 @@
     build:
       context: .
       dockerfile: OutBoxPattern.Api/Dockerfile
+
+  outbox-db:
+    image: postgres:latest
+    container_name: User.Db
+    environment:
+      - POSTGRES_DB=UsersDb
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - ./.containers/database:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
