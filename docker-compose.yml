@@ -1,0 +1,6 @@
+﻿services:
+  outboxpattern.api:
+    image: outboxpattern.api
+    build:
+      context: .
+      dockerfile: OutBoxPattern.Api/Dockerfile

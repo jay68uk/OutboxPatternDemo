@@ -1,0 +1,6 @@
+@OutBoxPattern.Api_HostAddress = http://localhost:5078
+
+GET {{OutBoxPattern.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
