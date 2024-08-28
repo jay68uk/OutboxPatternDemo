@@ -10,6 +10,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddBackgroundJobs(builder.Configuration);
+builder.Services.AddOutboxEventDispatcher();
 
 var app = builder.Build();
 

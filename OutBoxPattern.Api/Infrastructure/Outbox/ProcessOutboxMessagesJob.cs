@@ -11,6 +11,7 @@ namespace OutBoxPattern.Api.Infrastructure.Outbox;
 [DisallowConcurrentExecution]
 internal sealed class ProcessOutboxMessagesJob : IJob
 {
+  private readonly OutboxEventDispatcher _dispatcher;
   // private static readonly JsonSerializerSettings JsonSerializerSettings = new()
   // {
   //   TypeNameHandling = TypeNameHandling.All
@@ -26,11 +27,13 @@ internal sealed class ProcessOutboxMessagesJob : IJob
     ISqlConnectionFactory sqlConnectionFactory,
     IPublisher publisher,
     IOptions<OutboxOptions> outboxOptions,
-    ILogger<ProcessOutboxMessagesJob> logger)
+    ILogger<ProcessOutboxMessagesJob> logger,
+    OutboxEventDispatcher dispatcher)
   {
     _sqlConnectionFactory = sqlConnectionFactory;
     _publisher = publisher;
     _logger = logger;
+    _dispatcher = dispatcher;
     _outboxOptions = outboxOptions.Value;
   }
 
@@ -49,10 +52,14 @@ internal sealed class ProcessOutboxMessagesJob : IJob
 
       try
       {
-        var domainEvent = JsonSerializer.Deserialize<DomainEventResponse>(
-          outboxMessage.Payload)!;
+        var type = Type.GetType(outboxMessage.EventType);
+        if (type == null) throw new InvalidOperationException($"Unknown type: {outboxMessage.EventType}");
 
-        await _publisher.Publish(domainEvent, context.CancellationToken);
+        var domainEvent = JsonSerializer.Deserialize(
+          outboxMessage.Payload, type)!;
+
+        _logger.LogInformation("Processing event type {@EventType}", domainEvent);
+        _dispatcher.Dispatch(domainEvent);
       }
       catch (Exception caughtException)
       {

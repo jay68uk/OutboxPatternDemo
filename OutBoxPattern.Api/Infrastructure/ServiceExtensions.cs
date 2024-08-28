@@ -3,6 +3,8 @@ using OutBoxPattern.Api.Application.Abstractions;
 using OutBoxPattern.Api.Domain.Abstractions;
 using OutBoxPattern.Api.Infrastructure.Data;
 using OutBoxPattern.Api.Infrastructure.Outbox;
+using OutBoxPattern.Api.Infrastructure.Outbox.EventHandlers;
+using OutBoxPattern.Api.Messaging;
 using Quartz;
 
 namespace OutBoxPattern.Api.Infrastructure;
@@ -43,5 +45,13 @@ public static class ServiceExtensions
     builder.AddQuartzHostedService(options => options.WaitForJobsToComplete = true);
 
     builder.ConfigureOptions<ProcessOutboxMessagesJobSetup>();
+  }
+
+  public static IServiceCollection AddOutboxEventDispatcher(this IServiceCollection builder)
+  {
+    builder.AddScoped<OutboxEventDispatcher>();
+    builder.AddTransient<IOutboxEventHandler<UserCreatedDomainEvent>, UserCreatedEventHandler>();
+
+    return builder;
   }
 }

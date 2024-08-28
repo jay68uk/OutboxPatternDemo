@@ -2,13 +2,22 @@
 
 namespace OutBoxPattern.Api.Messaging;
 
-public class UserCreatedDomainEvent(User user) : IDomainEvent
+public class UserCreatedDomainEvent : IDomainEvent
 {
-  public Guid UserId { get; } = user.Id;
+  public UserCreatedDomainEvent()
+  {
+  }
 
-  public string LastName { get; } = user.LastName;
+  public UserCreatedDomainEvent(User user)
+  {
+    UserId = user.Id;
+    LastName = user.LastName;
+    FirstName = user.FirstName;
+    Email = user.Email;
+  }
 
-  public string FirstName { get; } = user.FirstName;
-
-  public string Email { get; } = user.Email;
+  public Guid UserId { get; set; }
+  public string LastName { get; set; }
+  public string FirstName { get; set; }
+  public string Email { get; set; }
 }

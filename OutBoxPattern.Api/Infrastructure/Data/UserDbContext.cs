@@ -54,8 +54,8 @@ public class UserDbContext : DbContext, IUnitOfWork
       })
       .Select(domainEvent => new OutboxMessage(
         Guid.NewGuid(),
-        domainEvent.GetType().Name,
-        JsonSerializer.Serialize(domainEvent)
+        domainEvent.GetType().AssemblyQualifiedName!,
+        JsonSerializer.Serialize(domainEvent, domainEvent.GetType())
       ))
       .ToList();
 
