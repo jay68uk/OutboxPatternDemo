@@ -14,3 +14,6 @@ Depending on the type of the message a dispatcher will send the message to the a
 - Navigate to the project folder ``` cd ./OutBoxPattern.Api ```
 - Apply the DB migrations ``` dotnet ef database update ```
 - ``` dotnet run ```
+
+### Notes:
+The database has a mounted volume so if the conatiner is stopped, when it is restarted the data will persist.
