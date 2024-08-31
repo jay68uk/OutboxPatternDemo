@@ -1,9 +1,10 @@
-﻿using MediatR;
+﻿using Ardalis.Result;
+using MediatR;
 using OutBoxPattern.Api.Infrastructure.Data;
 
 namespace OutBoxPattern.Api.Application.User;
 
-public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, Domain.User>
+public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, Result<Domain.User>>
 {
   private readonly UserRepository _userRepository;
 
@@ -12,7 +13,7 @@ public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, Domai
     _userRepository = userRepository;
   }
 
-  public async Task<Domain.User> Handle(CreateUserCommand request, CancellationToken cancellationToken)
+  public async Task<Result<Domain.User>> Handle(CreateUserCommand request, CancellationToken cancellationToken)
   {
     var newUser =
       await _userRepository.CreateUserAsync(Guid.NewGuid(), request.FirstName, request.LastName, request.Email);

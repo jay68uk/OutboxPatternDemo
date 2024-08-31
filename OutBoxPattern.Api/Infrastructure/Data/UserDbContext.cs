@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 using OutBoxPattern.Api.Application.Exceptions;
 using OutBoxPattern.Api.Domain;
 using OutBoxPattern.Api.Domain.Abstractions;
@@ -26,7 +27,7 @@ public class UserDbContext : DbContext, IUnitOfWork
 
       return result;
     }
-    catch (DbUpdateConcurrencyException ex)
+    catch (DbUpdateException ex) when (IsUniqueConstraintViolation(ex))
     {
       throw new ConcurrencyException("Concurrency exception occurred.", ex);
     }
@@ -60,5 +61,11 @@ public class UserDbContext : DbContext, IUnitOfWork
       .ToList();
 
     AddRange(outboxMessages);
+  }
+
+  private static bool IsUniqueConstraintViolation(DbUpdateException ex)
+  {
+    if (ex.InnerException is PostgresException pgEx) return pgEx.SqlState == PostgresErrorCodes.UniqueViolation;
+    return false;
   }
 }

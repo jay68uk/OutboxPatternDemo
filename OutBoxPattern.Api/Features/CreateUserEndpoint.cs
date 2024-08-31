@@ -1,4 +1,6 @@
-﻿using FastEndpoints;
+﻿using System.Net;
+using Ardalis.Result;
+using FastEndpoints;
 using MediatR;
 using OutBoxPattern.Api.Application.User;
 using OutBoxPattern.Api.Infrastructure.Data;
@@ -25,6 +27,19 @@ public class CreateUserEndpoint : Endpoint<CreateUserRequest>
   public override async Task HandleAsync(CreateUserRequest req, CancellationToken ct)
   {
     var result = await _mediator.Send(new CreateUserCommand(req.FirstName, req.LastName, req.Email), ct);
-    await SendOkAsync(ct);
+
+    if (result.IsSuccess)
+    {
+      await SendCreatedAtAsync("GetUserById",
+        result.Value.Id,
+        result.Value,
+        cancellation: ct);
+      return;
+    }
+
+    if (result.IsConflict())
+      await SendAsync("Email address has already been used!",
+        (int)HttpStatusCode.Conflict,
+        ct);
   }
 }
